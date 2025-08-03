@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import MangaCard from "@/components/MangaCardSearch";
@@ -23,7 +23,7 @@ type Tag = {
   name: string;
 };
 
-export default function Page() {
+function SearchPageContent() {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [tagParam, setTagParam] = useState("");
@@ -195,5 +195,31 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading component for the suspense fallback
+function SearchPageLoading() {
+  return (
+    <div className="min-h-screen mt-28 w-full relative overflow-x-hidden">
+      <div className="fixed inset-0 bg-black z-0" />
+      <div className="relative z-10 p-6 min-h-screen flex flex-col">
+        <div className="max-w-6xl w-full mx-auto flex-1 flex flex-col">
+          <div className="flex flex-col gap-6 mt-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <MangaCardSearchSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<SearchPageLoading />}>
+      <SearchPageContent />
+    </Suspense>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import MangaCard from "@/components/MangaCard";
 import MangaCardSkeleton from "@/components/MangaCardSkeleton";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
@@ -17,7 +17,7 @@ type Manga = {
   tags: string[];
 };
 
-export default function AuthorPage() {
+function AuthorPageContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -105,5 +105,27 @@ export default function AuthorPage() {
         </div>
       )}
     </main>
+  );
+}
+
+// Loading component for the suspense fallback
+function AuthorPageLoading() {
+  return (
+    <main className="min-h-screen pt-28 w-full bg-black text-white">
+      <div className="h-8 bg-zinc-800 rounded w-64 mx-5 mb-4 animate-pulse" />
+      <div className="grid p-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <MangaCardSkeleton key={i} />
+        ))}
+      </div>
+    </main>
+  );
+}
+
+export default function AuthorPage() {
+  return (
+    <Suspense fallback={<AuthorPageLoading />}>
+      <AuthorPageContent />
+    </Suspense>
   );
 }
