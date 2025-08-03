@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MangaCard from "@/components/MangaCard";
 import MangaCardSkeleton from "@/components/MangaCardSkeleton";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
@@ -17,11 +17,12 @@ type Manga = {
   tags: string[];
 };
 
-export default function AuthorPage(props: {
-  params: Promise<{ id: string; name: string }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+export default function AuthorPage({
+  params,
+}: {
+  params: { id: string; name: string };
 }) {
-  const { id: authorId, name: Name } = use(props.params);
+  const { id: authorId, name: Name } = params;
   const authorName = decodeURIComponent(Name).replace(/-/g, " ");
 
   const searchParams = useSearchParams();
