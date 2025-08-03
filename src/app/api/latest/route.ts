@@ -1,7 +1,27 @@
 // app/api/manga/latest/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+// --- Types ---
+type Relationship = {
+  type: string;
+  attributes?: {
+    fileName?: string;
+  };
+};
+
+type MangaEntry = {
+  id: string;
+  attributes: {
+    title: Record<string, string>;
+  };
+  relationships: Relationship[];
+};
+
+type MangaDexResponse = {
+  data: MangaEntry[];
+};
+
+export async function GET() {
   const apiKey = process.env.PUBLIC_NEXT_API_SECRETE_KEY;
 
   try {
@@ -16,26 +36,30 @@ export async function GET(req: NextRequest) {
       }
     );
 
-    const json = await res.json();
-    const data = json?.data || [];
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "MangaDex API returned an error." },
+        { status: res.status }
+      );
+    }
 
-    const formatted = data.map((item: any) => {
+    const json: MangaDexResponse = await res.json();
+
+    const formatted = json.data.map((item) => {
       const id = item.id;
       const title =
         item.attributes.title.en ||
         Object.values(item.attributes.title)[0] ||
         "Untitled";
 
-      let thumbnail = null;
       const coverRel = item.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel) => rel.type === "cover_art"
       );
-      if (coverRel) {
-        const fileName = coverRel.attributes?.fileName;
-        if (fileName) {
-          thumbnail = `https://uploads.mangadex.org/covers/${id}/${fileName}`;
-        }
-      }
+
+      const fileName = coverRel?.attributes?.fileName;
+      const thumbnail = fileName
+        ? `https://uploads.mangadex.org/covers/${id}/${fileName}.512.jpg`
+        : null;
 
       return { id, title, thumbnail };
     });
@@ -48,9 +72,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch latest manga" },
-      { status: 500 }
-    );
+    console.error("Failed to fetch:", error);
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
 }

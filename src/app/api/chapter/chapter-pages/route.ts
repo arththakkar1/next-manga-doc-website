@@ -49,6 +49,7 @@ export async function GET(req: NextRequest) {
 
     return response;
   } catch (error) {
+    console.error("Failed to fetch chapter pages:", error); // 👈 use the variable
     return NextResponse.json(
       { error: "Failed to fetch chapter pages" },
       { status: 500 }

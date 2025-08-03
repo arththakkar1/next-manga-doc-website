@@ -14,12 +14,22 @@ async function fetchChapters(mangaId: string): Promise<Chapter[]> {
   const res = await fetch(`/api/chapter?mangaId=${mangaId}`);
   const data = await res.json();
   if (!data?.data) return [];
-  return data.data.map((ch: any) => ({
-    id: ch.id,
-    title: ch.attributes.title || `Chapter ${ch.attributes.chapter}`,
-    chapter: ch.attributes.chapter,
-    readableAt: ch.attributes.readableAt,
-  }));
+
+  return data.data.map(
+    (ch: {
+      id: string;
+      attributes: {
+        title?: string;
+        chapter: string;
+        readableAt: string;
+      };
+    }) => ({
+      id: ch.id,
+      title: ch.attributes.title || `Chapter ${ch.attributes.chapter}`,
+      chapter: ch.attributes.chapter,
+      readableAt: ch.attributes.readableAt,
+    })
+  );
 }
 
 export default function ChapterList({ mangaId }: { mangaId: string }) {

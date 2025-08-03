@@ -1,13 +1,12 @@
 "use client";
 
-import { SignedIn, useUser, useClerk } from "@clerk/nextjs";
+import { SignedIn, useUser } from "@clerk/nextjs";
 import { User2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export function SimpleUserInfo() {
   const { user } = useUser();
-  const { signOut } = useClerk();
 
   if (!user) return null;
 
@@ -15,11 +14,6 @@ export function SimpleUserInfo() {
     user.firstName && user.lastName
       ? `${user.firstName} ${user.lastName}`
       : user.username || "User";
-
-  const userInitials =
-    user.firstName && user.lastName
-      ? `${user.firstName[0]}${user.lastName[0]}`
-      : user.username?.[0]?.toUpperCase() || "U";
 
   return (
     <SignedIn>

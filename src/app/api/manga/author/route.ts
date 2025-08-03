@@ -1,5 +1,36 @@
 import { NextResponse } from "next/server";
 
+type Tag = {
+  id: string;
+  attributes: {
+    name: Record<string, string>;
+  };
+};
+
+type Relationship = {
+  id: string;
+  type: string;
+  attributes?: {
+    fileName?: string;
+    name?: string;
+  };
+};
+
+type Manga = {
+  id: string;
+  attributes: {
+    title: Record<string, string>;
+    description: Record<string, string> | string;
+    tags: Tag[];
+  };
+  relationships: Relationship[];
+};
+
+type MangaResponse = {
+  data: Manga[];
+  total: number;
+};
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
 
@@ -25,21 +56,23 @@ export async function GET(req: Request) {
     }
   );
 
-  const data = await res.json();
+  const data: MangaResponse = await res.json();
 
-  const manga = data.data.map((m: any) => {
-    const cover = m.relationships.find((rel: any) => rel.type === "cover_art");
+  const manga = data.data.map((m) => {
+    const cover = m.relationships.find((rel) => rel.type === "cover_art");
     const fileName = cover?.attributes?.fileName;
+
     const authors = m.relationships
-      .filter((rel: any) => rel.type === "author")
-      .map((rel: any) => rel.attributes?.name)
-      .filter(Boolean);
-    const tags = Array.isArray(m.attributes.tags)
-      ? m.attributes.tags
-          .map((tag: any) => tag.attributes?.name?.en)
-          .filter(Boolean)
-      : [];
+      .filter((rel) => rel.type === "author")
+      .map((rel) => rel.attributes?.name)
+      .filter((name): name is string => Boolean(name));
+
+    const tags = m.attributes.tags.map(
+      (tag) => tag.attributes.name.en || "Unknown"
+    );
+
     const stars = Math.floor(Math.random() * 5) + 1;
+
     const description =
       typeof m.attributes.description === "object"
         ? m.attributes.description.en || "No description"

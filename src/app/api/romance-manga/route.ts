@@ -1,7 +1,31 @@
 import { NextResponse } from "next/server";
 
+interface MangaAttributes {
+  title: Record<string, string>;
+}
+
+interface CoverArtAttributes {
+  fileName: string;
+}
+
+interface Relationship {
+  type: string;
+  attributes?: CoverArtAttributes;
+}
+
+interface Manga {
+  id: string;
+  attributes: MangaAttributes;
+  relationships: Relationship[];
+}
+
+interface MangaDexResponse {
+  data: Manga[];
+}
+
 export async function GET() {
   const apiKey = process.env.PUBLIC_NEXT_API_SECRETE_KEY;
+
   try {
     const res = await fetch(
       "https://api.mangadex.org/manga?limit=12&includedTags[]=423e2eae-a7a2-4a8b-ac03-a8351462d71d&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en&contentRating[]=safe&contentRating[]=suggestive",
@@ -14,29 +38,38 @@ export async function GET() {
       }
     );
 
-    const json = await res.json();
-    const data = json?.data || [];
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "MangaDex API error", status: res.status },
+        { status: res.status }
+      );
+    }
 
-    const formatted = data.map((item: any) => {
+    const json: MangaDexResponse = await res.json();
+    const data = json?.data ?? [];
+
+    const formatted = data.map((item) => {
       const id = item.id;
       const title =
-        item.attributes.title.en ||
-        Object.values(item.attributes.title)[0] ||
+        item.attributes.title.en ??
+        Object.values(item.attributes.title)[0] ??
         "Untitled";
 
-      let thumbnail = null;
       const coverRel = item.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel) => rel.type === "cover_art"
       );
-      if (coverRel?.attributes?.fileName) {
-        thumbnail = `https://uploads.mangadex.org/covers/${id}/${coverRel.attributes.fileName}`;
-      }
+
+      const fileName = coverRel?.attributes?.fileName;
+      const thumbnail = fileName
+        ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
+        : null;
 
       return { id, title, thumbnail };
     });
 
     return NextResponse.json({ data: formatted }, { status: 200 });
   } catch (error) {
+    console.error("Failed to fetch seinen manga:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch seinen manga",

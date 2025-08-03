@@ -79,7 +79,7 @@ export default function Carousel() {
     }, AUTO_DELAY);
 
     return () => clearInterval(intervalRef);
-  }, []);
+  });
 
   const onDrageStart = () => {
     setDragging(true);
@@ -149,8 +149,8 @@ const Images = ({
   handleNext,
 }: {
   imgIndex: number;
-  handlePrev: any;
-  handleNext: any;
+  handlePrev: () => void;
+  handleNext: () => void;
 }) => {
   return (
     <>

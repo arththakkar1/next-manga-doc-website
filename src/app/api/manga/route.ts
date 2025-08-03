@@ -1,5 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Types for the Manga API response
+type MangaResponse = {
+  data: Manga;
+};
+
+type Manga = {
+  id: string;
+  attributes: {
+    title: Record<string, string>;
+    description: Record<string, string>;
+    status: string;
+    tags: Tag[];
+    publicationDemographic: string;
+    altTitles: Record<string, string>[];
+  };
+  relationships: Relationship[];
+};
+
+type Relationship = {
+  type: string;
+  id: string;
+  attributes?: {
+    fileName?: string;
+    name?: string;
+  };
+};
+
+type Tag = {
+  id: string;
+  attributes: {
+    name: Record<string, string>;
+    group: string;
+  };
+};
+
 export async function GET(req: NextRequest) {
   const mangaId = new URL(req.url).searchParams.get("id");
   const token = process.env.PUBLIC_NEXT_API_SECRETE_KEY;
@@ -33,7 +68,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const json = await res.json();
+    const json: MangaResponse = await res.json();
     const manga = json.data;
 
     const title =
@@ -47,47 +82,43 @@ export async function GET(req: NextRequest) {
     const status = manga.attributes.status || "Unknown";
 
     // Cover art
-    let thumbnail = null;
+    let thumbnail: string | null = null;
     const coverRel = manga.relationships.find(
-      (rel: any) => rel.type === "cover_art"
+      (rel) => rel.type === "cover_art"
     );
 
-    if (coverRel) {
-      const fileName = coverRel.attributes?.fileName;
-      if (fileName) {
-        thumbnail = `https://uploads.mangadex.org/covers/${mangaId}/${fileName}`;
-      }
+    if (coverRel?.attributes?.fileName) {
+      thumbnail = `https://uploads.mangadex.org/covers/${mangaId}/${coverRel.attributes.fileName}`;
     }
 
     // Authors with ID and name
     const authorRelations = manga.relationships.filter(
-      (rel: any) => rel.type === "author"
+      (rel) => rel.type === "author"
     );
 
     const authors = authorRelations
-      .map((rel: any) => ({
+      .map((rel) => ({
         id: rel.id,
         name: rel.attributes?.name,
       }))
-      .filter((a: any) => a.id && a.name);
+      .filter((a) => a.id && a.name);
 
     // Tags
     const tagsRaw = manga.attributes.tags || [];
-    const tags =
-      tagsRaw.map((tag: any) => ({
-        id: tag.id,
-        name: tag.attributes?.name?.en || "Unknown",
-      })) || [];
+    const tags = tagsRaw.map((tag) => ({
+      id: tag.id,
+      name: tag.attributes?.name?.en || "Unknown",
+    }));
 
     const themes = tagsRaw
-      .filter((tag: any) => tag.attributes?.group === "theme")
-      .map((tag: any) => tag.attributes?.name?.en)
+      .filter((tag) => tag.attributes?.group === "theme")
+      .map((tag) => tag.attributes?.name?.en)
       .filter(Boolean);
 
     const format = manga.attributes.publicationDemographic || "Unknown";
 
     const altTitles = (manga.attributes.altTitles || [])
-      .map((t: any) => Object.values(t)[0])
+      .map((t) => Object.values(t)[0])
       .filter(Boolean)
       .slice(0, 4);
 

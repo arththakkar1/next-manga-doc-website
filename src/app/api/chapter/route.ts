@@ -35,9 +35,7 @@ export async function GET(req: NextRequest) {
 
     return response;
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch chapter data" },
-      { status: 500 }
-    );
+    console.error("Failed to fetch:", error);
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
 }

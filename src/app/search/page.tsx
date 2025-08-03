@@ -18,6 +18,11 @@ type Manga = {
   tags: string[];
 };
 
+type Tag = {
+  id: string;
+  name: string;
+};
+
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -102,7 +107,7 @@ export default function Page() {
       <div className="relative z-10 p-6 min-h-screen flex flex-col">
         <div className="max-w-6xl w-full mx-auto flex-1 flex flex-col">
           <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            {tags.map((tag: any) => {
+            {tags.map((tag: Tag) => {
               const isActive = selectedTags.includes(tag.id);
               return (
                 <button

@@ -1,9 +1,9 @@
 "use client";
 
 import { useUser, useClerk } from "@clerk/nextjs";
-import { useState, useMemo, useCallback, memo } from "react";
+import { useMemo, useCallback, memo } from "react";
 import { sora } from "@/lib/fonts";
-import { User, Mail, Calendar, Edit3, LogOut } from "lucide-react";
+import { User, Mail, Calendar, LogOut } from "lucide-react";
 import Image from "next/image";
 import type { UserResource } from "@clerk/types";
 

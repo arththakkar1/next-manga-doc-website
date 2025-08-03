@@ -3,7 +3,7 @@
 import { sora } from "@/lib/fonts";
 
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import {
@@ -13,31 +13,17 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import Loading from "./Loading";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 import { SimpleUserInfo } from "./SimpleUserInfo";
 
 function Navbar() {
   const [loading, setLoading] = React.useState(false);
-  const [user, setUser] = React.useState<{
-    name?: string;
-    email?: string;
-  } | null>(null);
+
   const router = useRouter();
   const pathname = usePathname();
 
   // Hide navbar on auth routes
   const shouldHideNavbar = pathname === "/sign-in" || pathname === "/sign-up";
-
-  const handleLogOut = async () => {
-    setLoading(true);
-    try {
-      setUser(null);
-    } catch (error: any) {
-      alert(error?.message || "Not logged in");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleRandomClick = async (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -57,17 +43,6 @@ function Navbar() {
     }
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-      } catch {
-        setUser(null);
-      }
-    };
-    fetchUser();
-  }, []);
-
-  // Don't render navbar on auth routes
   if (shouldHideNavbar) {
     return null;
   }

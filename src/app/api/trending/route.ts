@@ -1,7 +1,30 @@
-// app/api/manga/trending/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+interface MangaTitle {
+  en?: string;
+  [key: string]: string | undefined;
+}
+
+interface CoverArt {
+  type: "cover_art";
+  attributes?: {
+    fileName?: string;
+  };
+}
+
+interface Manga {
+  id: string;
+  attributes: {
+    title: MangaTitle;
+  };
+  relationships: CoverArt[];
+}
+
+interface MangaDexResponse {
+  data: Manga[];
+}
+
+export async function GET() {
   const apiKey = process.env.PUBLIC_NEXT_API_SECRETE_KEY;
 
   try {
@@ -16,28 +39,31 @@ export async function GET(req: NextRequest) {
       }
     );
 
-    const json = await res.json();
-    const data = json?.data || [];
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch trending manga" },
+        { status: res.status }
+      );
+    }
 
-    const formatted = data.map((item: any) => {
+    const json: MangaDexResponse = await res.json();
+    const data = json?.data ?? [];
+
+    const formatted = data.map((item) => {
       const id = item.id;
       const title =
         item.attributes.title.en ||
         Object.values(item.attributes.title)[0] ||
         "Untitled";
 
-      let thumbnail = null;
       const coverRel = item.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel) => rel.type === "cover_art"
       );
-      if (coverRel) {
-        const fileName = coverRel.attributes?.fileName;
-        if (fileName) {
-          // Use higher quality thumbnail
-          thumbnail = `https://uploads.mangadex.org/covers/${id}/${fileName}`;
-        }
-      }
-      // ---------------------------------------------------
+      const fileName = coverRel?.attributes?.fileName;
+
+      const thumbnail = fileName
+        ? `https://uploads.mangadex.org/covers/${id}/${fileName}`
+        : null;
 
       return { id, title, thumbnail };
     });
@@ -51,7 +77,10 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch trending manga" },
+      {
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      },
       { status: 500 }
     );
   }

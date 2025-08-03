@@ -1,11 +1,31 @@
-// app/api/tags/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+interface TagAttributes {
+  name: {
+    en: string;
+    [key: string]: string;
+  };
+  group: string;
+}
+
+interface Tag {
+  id: string;
+  attributes: TagAttributes;
+}
+
+interface MangaDexTagResponse {
+  data: Tag[];
+}
+
+export async function GET() {
   try {
     const res = await fetch("https://api.mangadex.org/manga/tag", {
       next: {
-        revalidate: 60 * 60 * 24 * 365, // 1 year in seconds
+        revalidate: 60 * 60 * 24 * 365, // 1 year
+      },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.PUBLIC_NEXT_API_SECRETE_KEY}`,
       },
     });
 
@@ -16,9 +36,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const { data } = await res.json();
+    const json: MangaDexTagResponse = await res.json();
 
-    const tags = data.map((tag: any) => ({
+    const tags = json.data.map((tag) => ({
       id: tag.id,
       name: tag.attributes.name.en,
       group: tag.attributes.group,
@@ -31,9 +51,12 @@ export async function GET(req: NextRequest) {
     );
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
-      { error: error.message || "Unknown error" },
+      {
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      },
       { status: 500 }
     );
   }

@@ -1,7 +1,27 @@
 import { NextResponse } from "next/server";
 
+type MangaResponse = {
+  data: MangaEntry[];
+};
+
+type MangaEntry = {
+  id: string;
+  attributes: {
+    title: Record<string, string>;
+  };
+  relationships: Relationship[];
+};
+
+type Relationship = {
+  type: string;
+  attributes?: {
+    fileName?: string;
+  };
+};
+
 export async function GET() {
   const apiKey = process.env.PUBLIC_NEXT_API_SECRETE_KEY;
+
   try {
     const res = await fetch(
       "https://api.mangadex.org/manga?limit=12&includedTags[]=cdad7e68-1419-41dd-bdce-27753074a640&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en&contentRating[]=safe&contentRating[]=suggestive",
@@ -14,20 +34,21 @@ export async function GET() {
       }
     );
 
-    const json = await res.json();
+    const json: MangaResponse = await res.json();
     const data = json?.data || [];
 
-    const formatted = data.map((item: any) => {
+    const formatted = data.map((item) => {
       const id = item.id;
       const title =
         item.attributes.title.en ||
         Object.values(item.attributes.title)[0] ||
         "Untitled";
 
-      let thumbnail = null;
+      let thumbnail: string | null = null;
       const coverRel = item.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel) => rel.type === "cover_art"
       );
+
       if (coverRel?.attributes?.fileName) {
         thumbnail = `https://uploads.mangadex.org/covers/${id}/${coverRel.attributes.fileName}`;
       }

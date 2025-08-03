@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const apiKey = process.env.PUBLIC_NEXT_API_SECRETE_KEY;
 
   try {
@@ -26,9 +26,7 @@ export async function GET(req: NextRequest) {
 
     return response;
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch random manga" },
-      { status: 500 }
-    );
+    console.error("Failed to fetch:", error);
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
 }
