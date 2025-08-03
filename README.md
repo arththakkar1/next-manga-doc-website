@@ -1,37 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MangaDoc
 
-## Getting Started
+**MangaDoc** is a modern, responsive manga reading website built with Next.js. It uses the MangaDex API to fetch manga data, allowing users to search, filter by tags, view details, and read chapters in a smooth, optimized UI.
 
-First, run the development server:
+![MangaDoc Banner](public/banner.png) <!-- Replace with your actual banner path or remove -->
+
+---
+
+## 🚀 Features
+
+- 🔍 **Search Manga** by title and tags
+- 🏷️ **Tag Filtering** on the `/search` page
+- 📖 **Chapter Reader** with smooth page transitions
+- 📚 **View Manga Details** including authors, description, and cover
+- 🌙 **Dark Theme UI** with a primary color of `#610094`
+- 🔁 **Pagination** for better browsing performance
+- ✅ **Responsive** design for mobile and desktop
+- 🔐 **Authentication** using Clerk with custom UI
+- ⚡ **Client-side Caching** using React Query
+
+---
+
+## 🧰 Tech Stack
+
+- [Next.js 14 (App Router)](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Shadcn/UI](https://ui.shadcn.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [React Query](https://tanstack.com/query/v4)
+- [MangaDex API](https://api.mangadex.org/)
+- [Clerk Elements](https://clerk.com/docs/elements)
+
+---
+
+## 🖼️ Screenshots
+
+| Home Page | Search Page | Manga Details |
+|-----------|-------------|----------------|
+| ![](public/screens/home.png) | ![](public/screens/search.png) | ![](public/screens/details.png) |
+
+---
+
+## 📂 Project Structure
+
+.
+├── app/ # Next.js App Router pages
+├── components/ # Reusable UI components
+├── lib/ # Fonts, API utils
+├── public/ # Static assets
+└── styles/ # Global styles
+
+yaml
+Copy
+Edit
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Git
+
+### Installation
 
 ```bash
+git clone https://github.com/arththakkar1/next-manga-doc-website.git
+cd next-manga-doc-website
+npm install
+Development Server
+bash
+Copy
+Edit
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Visit http://localhost:3000 to view the app.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+☁️ Deployment
+The project is ready to be deployed on platforms like Vercel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Deploy on Vercel
+Push your project to GitHub.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Go to vercel.com, sign in with GitHub, and import the repo.
 
-## Learn More
+Set environment variables if needed (e.g., Clerk keys).
 
-To learn more about Next.js, take a look at the following resources:
+Click Deploy and you're done!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+👥 Contributors
+Made with ❤️ by:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Arth Thakkar
 
-## Deploy on Vercel
+Manan Rupaliya
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Bhavya Solanki
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# next-manga-doc-website
+Krish Tank
+
+Abhi Thakkar
+
+<!-- Replace the empty GitHub links with actual ones if available -->
+📄 License
+Licensed under the MIT License.
