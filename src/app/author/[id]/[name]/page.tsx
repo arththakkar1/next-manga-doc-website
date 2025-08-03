@@ -18,7 +18,7 @@ type Manga = {
 };
 
 export default function AuthorPage() {
-  const params = useParams(); // 👈 get dynamic params
+  const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
 

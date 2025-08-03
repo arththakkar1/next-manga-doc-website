@@ -14,7 +14,7 @@ type Manga = {
 };
 
 export default function TagPage() {
-  const params = useParams(); // ✅ this is correct
+  const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
 

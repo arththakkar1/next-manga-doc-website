@@ -25,11 +25,24 @@ type Tag = {
 
 export default function Page() {
   const router = useRouter();
+  const [q, setQ] = useState("");
+  const [tagParam, setTagParam] = useState("");
+  const [pageParam, setPageParam] = useState(1);
+
   const searchParams = useSearchParams();
-  const q = searchParams.get("q") || "";
-  const tagParam = searchParams.get("tags") || "";
+
+  useEffect(() => {
+    const qParam = searchParams.get("q") || "";
+    const tags = searchParams.get("tags") || "";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+
+    setQ(qParam);
+    setTagParam(tags);
+    setPageParam(page);
+  }, [searchParams]);
+
   const selectedTags = tagParam.split(",").filter(Boolean);
-  const pageParam = parseInt(searchParams.get("page") || "1", 10);
+
   const [page, setPage] = useState(pageParam);
   const limit = 10;
   const offset = (page - 1) * limit;
