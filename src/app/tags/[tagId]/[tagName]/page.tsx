@@ -1,8 +1,7 @@
 "use client";
 
-import { use } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import MangaCard from "@/components/MangaCard";
 import MangaCardSkeleton from "@/components/MangaCardSkeleton";
@@ -14,15 +13,13 @@ type Manga = {
   thumbnail: string;
 };
 
-export default function TagPage({
-  params,
-}: {
-  params: Promise<{ tagId: string; tagName: string }>;
-}) {
-  const { tagId, tagName } = use(params);
-
-  const searchParams = useSearchParams();
+export default function TagPage() {
+  const params = useParams(); // ✅ this is correct
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const tagId = params.tagId as string;
+  const tagName = params.tagName as string;
 
   const pageParam = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState(pageParam);
@@ -99,7 +96,7 @@ export default function TagPage({
           <button
             onClick={() => changePage(page + 1)}
             disabled={page >= maxPages}
-            className="p-2.5  cursor-pointer rounded-full bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40"
+            className="p-2.5 cursor-pointer rounded-full bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40"
           >
             <MdNavigateNext className="text-xl" />
           </button>

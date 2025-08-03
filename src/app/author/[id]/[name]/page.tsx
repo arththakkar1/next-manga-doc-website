@@ -1,7 +1,7 @@
 "use client";
 
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import MangaCard from "@/components/MangaCard";
 import MangaCardSkeleton from "@/components/MangaCardSkeleton";
@@ -17,16 +17,14 @@ type Manga = {
   tags: string[];
 };
 
-export default function AuthorPage({
-  params,
-}: {
-  params: { id: string; name: string };
-}) {
-  const { id: authorId, name: Name } = params;
-  const authorName = decodeURIComponent(Name).replace(/-/g, " ");
-
-  const searchParams = useSearchParams();
+export default function AuthorPage() {
+  const params = useParams(); // 👈 get dynamic params
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const authorId = params.id as string;
+  const Name = params.name as string;
+  const authorName = decodeURIComponent(Name).replace(/-/g, " ");
 
   const pageParam = parseInt(searchParams.get("page") || "1", 10);
   const [page, setPage] = useState(pageParam);
