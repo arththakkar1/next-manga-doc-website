@@ -10,8 +10,6 @@ Always support official manga platforms when possible.
 
 A modern, responsive manga reading platform built with Next.js, featuring a sleek dark interface and comprehensive manga discovery features.
 
-🌐 **Live Demo**: [https://next-manga-doc.vercel.app/](https://next-manga-doc.vercel.app/)
-
 ## ✨ Features
 
 ### 🔍 **Advanced Search & Discovery**
@@ -256,7 +254,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 🔗 Links
 
-- **Live Website**: [https://next-manga-doc.vercel.app/](https://next-manga-doc.vercel.app/)
 - **Repository**: [GitHub](https://github.com/arththakkar1/next-manga-doc-website)
 
 ---
